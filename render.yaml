@@ -6,6 +6,25 @@ services:
     plan: free
     buildCommand: cd backend/api-gateway && npm i --save-dev @types/cors && npm install && npm run build
     startCommand: cd backend/api-gateway && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3000"
+      - key: AUTH_SERVICE_URL
+        value: https://pet-care-auth-service.onrender.com
+      - key: PET_SERVICE_URL
+        value: https://pet-care-pet-service.onrender.com
+      - key: BILLING_SERVICE_URL
+        value: https://pet-care-billing-service.onrender.com
+      - key: REMINDERS_SERVICE_URL
+        value: https://pet-care-reminders-service.onrender.com
+      - key: RATE_LIMIT_WINDOW_MS
+        value: "900000"
+      - key: RATE_LIMIT_MAX_REQUESTS
+        value: "100"
+      - key: LOG_LEVEL
+        value: info
     
     
   # Auth Service
