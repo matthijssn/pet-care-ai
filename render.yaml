@@ -1,0 +1,70 @@
+services:
+  # API Gateway Service
+  - type: web
+    name: pet-care-api-gateway
+    runtime: node
+    plan: free
+    buildCommand: cd backend/api-gateway && npm install && npm run build
+    startCommand: cd backend/api-gateway && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+    
+  # Auth Service
+  - type: web
+    name: pet-care-auth-service
+    runtime: node
+    plan: free
+    buildCommand: cd backend/auth-services && npm install && npm run build
+    startCommand: cd backend/auth-services && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        sync: false
+      
+  # Pet Service
+  - type: web
+    name: pet-care-pet-service
+    runtime: node
+    plan: free
+    buildCommand: cd backend/pet-services && npm install && npm run build
+    startCommand: cd backend/pet-services && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      
+  # Billing Service
+  - type: web
+    name: pet-care-billing-service
+    runtime: node
+    plan: free
+    buildCommand: cd backend/billing-service && npm install && npm run build
+    startCommand: cd backend/billing-service && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: STRIPE_SECRET_KEY
+        sync: false
+        
+  # Reminders Service
+  - type: web
+    name: pet-care-reminders-service
+    runtime: node
+    plan: free
+    buildCommand: cd backend/reminders-service && npm install && npm run build
+    startCommand: cd backend/reminders-service && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+  # Common Library (shared dependencies)
+  - type: web
+    name: pet-care-common-lib
+    runtime: node
+    plan: free
+    buildCommand: cd libs/common && npm install && npm run build
+    startCommand: echo "Library package - no start command needed"
+    envVars:
+      - key: NODE_ENV
+        value: production
