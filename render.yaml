@@ -4,7 +4,7 @@ services:
     name: pet-care-api-gateway
     runtime: node
     plan: free
-    buildCommand: cd backend/api-gateway && npm install && npm run build
+    buildCommand: cd backend/api-gateway && npm i --save-dev @types/cors && npm install && npm run build
     startCommand: cd backend/api-gateway && npm start
     envVars:
       - key: NODE_ENV
