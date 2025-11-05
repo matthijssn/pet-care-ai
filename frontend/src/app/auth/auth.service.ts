@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,7 +20,7 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
-    return this.http.post<any>(this.url('api/login'), { email, password }).pipe(
+    return this.http.post<any>(this.url('api/auth/login'), { email, password }).pipe(
       tap(response => {
         localStorage.setItem(this.accessTokenKey, response.accessToken);
         localStorage.setItem(this.refreshTokenKey, response.refreshToken);

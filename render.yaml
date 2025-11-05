@@ -45,7 +45,7 @@ services:
     plan: free
     buildCommand: cd backend/pet-services && npm install && npm run build
     startCommand: cd backend/pet-services && npm start
-    envVars:
+
       
   # Billing Service
   - type: web
@@ -65,4 +65,4 @@ services:
     plan: free
     buildCommand: cd backend/reminders-service && npm install && npm run build
     startCommand: cd backend/reminders-service && npm start
-    envVars:
+
