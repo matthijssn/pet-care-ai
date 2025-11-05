@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,11 +22,9 @@ import { MatButtonModule } from '@angular/material/button';
   ]
 })
 export class LoginComponent {
-  loginForm : any;
+  loginForm: FormGroup;
   loginValid = true;
 
-  email = '';
-  password = '';
   error = '';
 
   constructor(private authService: AuthService, private fb : FormBuilder, private router: Router) {
@@ -37,14 +35,22 @@ export class LoginComponent {
   }
 
   onLogin() {
-    this.authService.login(this.email, this.password).subscribe({
-      next: () => { 
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
+    const { email, password } = this.loginForm.value;
+
+    this.authService.login(email, password).subscribe({
+      next: () => {
         this.loginValid = true;
-        this.router.navigate(['/dashboard'])
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.loginValid = false;
-        this.error = 'Login mislukt'
+        // Prefer server-provided message when available
+        this.error = err?.error?.message || 'Login mislukt';
       }
     });
   }
