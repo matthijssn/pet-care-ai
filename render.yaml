@@ -66,12 +66,3 @@ services:
     buildCommand: cd backend/reminders-service && npm install && npm run build
     startCommand: cd backend/reminders-service && npm start
     envVars:
-
-  # Common Library (shared dependencies)
-  - type: web
-    name: pet-care-common-lib
-    runtime: node
-    plan: free
-    buildCommand: cd libs/common && npm install && npm run build
-    startCommand: echo "Library package - no start command needed"
-    envVars:
