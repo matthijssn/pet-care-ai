@@ -1,10 +1,19 @@
+// src/types/express-augment.d.ts
 
+// 1) Augment express-serve-static-core safely (adds req.user)
 import 'express-serve-static-core';
 
-import 'express-rate-limit';
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: {
+      sub: string;
+      role?: string;
+    };
+  }
+}
 
-
-
+// 2) (Optional) Provide types for express-rate-limit if your installed version lacks types.
+// NOTE: If your installed express-rate-limit already ships types, remove this block to avoid conflicts.
 declare module 'express-rate-limit' {
   import { Request, Response, NextFunction } from 'express';
 
@@ -31,12 +40,5 @@ declare module 'express-rate-limit' {
   export = rateLimit;
 }
 
-
-declare module 'express-serve-static-core' {
-  interface Request {
-    user?: {
-      sub: string;
-      role?: string;
-    };
-  }
-}
+// Make this a module (avoids global augmentation pitfalls in some setups)
+export {};
