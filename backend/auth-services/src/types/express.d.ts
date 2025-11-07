@@ -1,20 +1,9 @@
-declare module 'cors' {
-  import { RequestHandler } from 'express';
 
-  interface CorsOptions {
-    origin?: boolean | string | RegExp | (string | RegExp)[] | ((origin: string, callback: (err: Error | null, allow?: boolean) => void) => void);
-    methods?: string | string[];
-    allowedHeaders?: string | string[];
-    exposedHeaders?: string | string[];
-    credentials?: boolean;
-    maxAge?: number;
-    preflightContinue?: boolean;
-    optionsSuccessStatus?: number;
-  }
+import 'express-serve-static-core';
 
-  function cors(options?: CorsOptions): RequestHandler;
-  export = cors;
-}
+import 'express-rate-limit';
+
+
 
 declare module 'express-rate-limit' {
   import { Request, Response, NextFunction } from 'express';
@@ -40,4 +29,14 @@ declare module 'express-rate-limit' {
 
   function rateLimit(options?: Options): RateLimitRequestHandler;
   export = rateLimit;
+}
+
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: {
+      sub: string;
+      role?: string;
+    };
+  }
 }
