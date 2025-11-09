@@ -1,9 +1,9 @@
 
 import bcrypt from 'bcrypt';
 import { User } from '../models/user.model';
-import { signJwt, signRefreshJwt, verifyRefreshJwt } from '@smartpet/common';
 
 import express, {Request, Response, NextFunction} from 'express';
+import { signJwt, signRefreshJwt, verifyRefreshJwt } from 'src/middleware/jwt.middleware';
 
 const router = express.Router();
 

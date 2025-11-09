@@ -1,6 +1,6 @@
 
-import { verifyJwt } from '@smartpet/common';
 import { NextFunction, Request, Response } from 'express';
+import { verifyJwt } from './jwt.middleware';
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
