@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { User } from '../models/user.model';
 
 import express, {Request, Response, NextFunction} from 'express';
-import { signJwt, signRefreshJwt, verifyRefreshJwt } from 'src/middleware/jwt.middleware';
+import { signJwt, signRefreshJwt, verifyRefreshJwt } from '../middleware/jwt.middleware';
 
 const router = express.Router();
 
