@@ -11,7 +11,7 @@ const options = {
   target: config.authServiceUrl,
   changeOrigin: true,
   pathRewrite: {
-    '^/api/auth': '', // remove /api/auth prefix when forwarding
+    '^/api/auth': '/auth', // remove /api/auth prefix when forwarding
   },
   proxyTimeout: 30000, // 30 seconds
   timeout: 30000,
