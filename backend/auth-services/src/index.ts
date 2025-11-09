@@ -14,8 +14,12 @@ app.use('/auth', authRoutes);
 
 app.get('/health', (_, res) => res.json({ ok: true, service: 'auth-service' }));
 
-mongoose.connect(process.env.MONGO_URL!)
-  .then(() => {
-    app.listen(3000, () => console.log('Auth service running on http://localhost:3000'));
-  })
-  .catch(err => console.error('MongoDB connection error:', err));
+
+import { connectDB } from './db/connect';
+
+(async () => {
+  await connectDB();
+  // Start daarna je Express-app
+  app.listen(3000, () => console.log('Auth service running on http://localhost:3000'));
+})();
+
