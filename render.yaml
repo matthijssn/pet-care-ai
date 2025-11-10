@@ -35,6 +35,8 @@ services:
     buildCommand: cd backend/auth-services && npm install && npm ci && npm run build
     startCommand: cd backend/auth-services && npm start
     envVars:
+      - key: NODE_ENV
+        value: production
       - key: JWT_SECRET
         sync: false
       
