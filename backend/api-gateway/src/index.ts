@@ -15,7 +15,7 @@ const config = loadConfig();
 // Security middleware
 app.use(helmet());
 app.use(cors());
-app.use(express.json());
+
 
 // Request logging
 app.use(requestLogger);
@@ -25,6 +25,9 @@ app.use(rateLimiter);
 
 // Configure routes
 configureRoutes(app);
+
+//Parse body after routing
+app.use(express.json());
 
 // Error handling
 app.use(errorHandler);
