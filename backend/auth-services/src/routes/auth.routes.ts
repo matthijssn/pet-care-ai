@@ -13,6 +13,8 @@ type LoginBody    = { email: string; password: string };
 type RefreshBody  = { refreshToken: string };
 
 
+router.get('/health', (_, res) => res.json({ ok: true, service: 'auth-service' }));
+
 
 router.post('/register', async (req: Request<{},{}, RegisterBody>, res: Response) => {
   const { email, password } = req.body;
