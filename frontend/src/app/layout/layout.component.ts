@@ -2,26 +2,40 @@ import { Component } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbar, MatToolbarModule } from '@angular/material/toolbar';
-import { RouterOutlet } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmLogoutDialogComponent } from './confirm-logout-dialog.component';
+import { AuthService } from '../core';
 
 @Component({
   selector: 'app-layout',
   imports: [
-    RouterOutlet,  
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
     MatToolbarModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    MatDialogModule
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
 })
 export class LayoutComponent {
-  
-constructor(private authService: AuthService) {}
+
+  constructor(private authService: AuthService, private router: Router, private dialog: MatDialog) { }
 
   logout() {
-    this.authService.logout();
+    const dialogRef = this.dialog.open(ConfirmLogoutDialogComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Logging out user from layout component');
+        this.authService.logout();
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
 

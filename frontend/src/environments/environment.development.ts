@@ -1,4 +1,4 @@
 export const environment = {
-  production: true,
-  baseUrl: 'https://pet-care-api-gateway.onrender.com'
+  production: false,
+  baseUrl: 'http://localhost:3000'
 };

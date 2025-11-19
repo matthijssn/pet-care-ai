@@ -38,6 +38,11 @@ testem.log
 /typings
 __screenshots__/
 
+# Angular build/cache folders (local and frontend)
+.angular/
+frontend/.angular/
+frontend/.angular/cache/
+
 # System files
 .DS_Store
 Thumbs.db

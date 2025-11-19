@@ -2,7 +2,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
+
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 
 @Injectable({
@@ -30,7 +32,7 @@ export class AuthService {
 
   refreshToken() {
     const refreshToken = localStorage.getItem(this.refreshTokenKey);  
-    return this.http.post<any>(this.url('api/refresh'), { refreshToken }).pipe( 
+    return this.http.post<any>(this.url('api/auth/refresh'), { refreshToken }).pipe( 
       tap(response => {
         localStorage.setItem(this.accessTokenKey, response.accessToken);
       })
@@ -48,5 +50,9 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return !!this.getAccessToken();
+  }
+
+  checkHealth() : Observable<{status: string}> {
+    return this.http.get<{status: string}>(this.url('api/auth/health'));    
   }
 }

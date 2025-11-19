@@ -12,9 +12,6 @@ app.use(express.json());
 
 app.use('/auth', authRoutes);
 
-app.get('/health', (_, res) => res.json({ ok: true, service: 'auth-service' }));
-
-
 import { connectDB } from './db/connect';
 
 (async () => {

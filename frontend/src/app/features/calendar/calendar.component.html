@@ -1,0 +1,19 @@
+<mat-card class="calendar-card">
+  <mat-card-title>Calendar</mat-card-title>
+  <mat-card-content>
+  <mat-calendar [(selected)]="selected" (selectedChange)="dateChanged($event)"></mat-calendar>
+
+    <div class="events">
+  <h3>Events for {{ selected | date:'fullDate' }}</h3>
+      <button mat-raised-button color="primary" (click)="openAddDialog()">Add Event</button>
+
+      <mat-list>
+        <mat-list-item *ngFor="let e of events">
+          <div mat-line>{{ e.title }}</div>
+          <div mat-line class="secondary">{{ e.dueAt | date:'short' }} • {{ e.petId || '—' }}</div>
+        </mat-list-item>
+      </mat-list>
+      <p *ngIf="events.length === 0">No events for this date.</p>
+    </div>
+  </mat-card-content>
+</mat-card>

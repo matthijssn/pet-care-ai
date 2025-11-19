@@ -1,12 +1,14 @@
 // login.component.ts
-import { Component } from '@angular/core';
-import { AuthService } from '../auth/auth.service';
+import { Component, OnInit } from '@angular/core';
+
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AuthService } from '../../../core';
 
 @Component({
   selector: 'app-login',
@@ -18,12 +20,14 @@ import { MatButtonModule } from '@angular/material/button';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatProgressSpinnerModule 
   ]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit{
   loginForm: FormGroup;
   loginValid = true;
+  backendHealthy = false;
 
   error = '';
 
@@ -31,6 +35,18 @@ export class LoginComponent {
     this.loginForm = this.fb.group({    
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
+    });
+  }
+
+  ngOnInit(): void {
+    this.authService.checkHealth().subscribe({
+      next: () => {
+        this.backendHealthy = true;
+      },
+      error: () => {
+        this.backendHealthy = false;
+        this.error = 'Authentication service is currently unavailable.';
+      }
     });
   }
 
