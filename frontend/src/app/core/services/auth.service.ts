@@ -12,7 +12,7 @@ import { environment } from '../../../environments/environment';
 })
 export class AuthService {
   private accessTokenKey = 'access_token';
-  private refreshTokenKey = 'access_token';
+  private refreshTokenKey = 'refresh_token';
 
   constructor(private http: HttpClient) {}
 
@@ -24,10 +24,35 @@ export class AuthService {
   login(email: string, password: string) {
     return this.http.post<any>(this.url('api/auth/login'), { email, password }).pipe(
       tap(response => {
-        localStorage.setItem(this.accessTokenKey, response.accessToken);
-        localStorage.setItem(this.refreshTokenKey, response.refreshToken);
+        // If MFA is required the server will respond with { mfaRequired: true, mfaToken }
+        if (!response.mfaRequired && response.accessToken) {
+          localStorage.setItem(this.accessTokenKey, response.accessToken);
+          localStorage.setItem(this.refreshTokenKey, response.refreshToken);
+        }
       })
     );
+  }
+
+  mfaLoginVerify(mfaToken: string, token: string) {
+    return this.http.post<any>(this.url('api/auth/mfa/login-verify'), { mfaToken, token }).pipe(
+      tap(response => {
+        if (response.accessToken) {
+          localStorage.setItem(this.accessTokenKey, response.accessToken);
+        }
+        if (response.refreshToken) {
+          localStorage.setItem(this.refreshTokenKey, response.refreshToken);
+        }
+      })
+    );
+  }
+
+  // helpers for enabling MFA on the account
+  mfaSetup() {
+    return this.http.post<any>(this.url('api/auth/mfa/setup'), {});
+  }
+
+  mfaVerify(token: string) {
+    return this.http.post<any>(this.url('api/auth/mfa/verify'), { token });
   }
 
   refreshToken() {

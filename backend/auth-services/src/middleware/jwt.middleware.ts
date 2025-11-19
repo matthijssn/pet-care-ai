@@ -21,3 +21,14 @@ export function verifyJwt(token: string): any {
 export function verifyRefreshJwt(token: string): any {
   return jwt.verify(token, refreshSecret);
 }
+
+// Short-lived JWT used during MFA verification steps (e.g. after password ok)
+const mfaSecret = process.env.JWT_MFA_SECRET || (process.env.JWT_SECRET || 'default_secret') + '_mfa';
+
+export function signMfaJwt(payload: object): string {
+  return jwt.sign(payload, mfaSecret, { expiresIn: '5m' });
+}
+
+export function verifyMfaJwt(token: string): any {
+  return jwt.verify(token, mfaSecret);
+}

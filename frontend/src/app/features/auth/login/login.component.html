@@ -1,7 +1,7 @@
 <div class="login-container">
 
 
-    <div *ngIf="error" class="error">{{ error }}</div>
+ 
 
 
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
@@ -11,6 +11,7 @@
                 <mat-spinner diameter="40"></mat-spinner>
                 <div class="loading-text">Checking authentication service...</div>
             </div>
+            <div *ngIf="error" class="error">{{ error }}</div>
             <img src="../../assets/logos/PetCareAI_logo.png" class="main-lock-icon" alt="">
         </div>
         <mat-error *ngIf="!loginValid">
@@ -37,6 +38,13 @@
             [disabled]="loginForm.invalid || !backendHealthy">
             Login
         </button>
+        <div *ngIf="mfaPending" class="mfa-block">
+            <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Authentication code</mat-label>
+                <input matInput [(ngModel)]="mfaCode" name="mfaCode" />
+            </mat-form-field>
+            <button mat-raised-button color="primary" (click)="onVerifyMfa()" class="full-width">Verify code</button>
+        </div>
         <div class="login-links">
             <a routerLink="/register">Create an account</a>
             <a routerLink="/forgot-password">Forgot password?</a>
