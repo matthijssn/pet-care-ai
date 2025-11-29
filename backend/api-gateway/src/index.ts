@@ -12,6 +12,8 @@ import { errorHandler } from './middleware/errorHandler';
 const app = express();
 const config = loadConfig();
 
+app.set('trust proxy', true);
+
 // Security middleware
 app.use(helmet());
 app.use(cors());
