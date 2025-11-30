@@ -1,5 +1,18 @@
 // src/types/express-augment.d.ts
 
+// Ambient declaration for express module (fallback when @types/express is not available)
+declare module 'express' {
+  function express(): any;
+  namespace express {
+    interface Application {
+      use(...args: any[]): any;
+      listen(...args: any[]): any;
+      json(): any;
+    }
+  }
+  export = express;
+}
+
 // 1) Augment express-serve-static-core safely (adds req.user)
 import 'express-serve-static-core';
 
