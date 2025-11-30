@@ -8,7 +8,7 @@ export const petRouter = Router();
 
 // Proxy middleware options
 const options = {
-  target: config.authServiceUrl,
+  target: config.petServiceUrl,
   changeOrigin: true,
   pathRewrite: {
     '^/api/pets': '/pets', // remove /api/auth prefix when forwarding
