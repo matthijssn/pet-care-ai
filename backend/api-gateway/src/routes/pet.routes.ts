@@ -4,7 +4,7 @@ import { loadConfig } from '../config';
 
 const config = loadConfig();
 
-export const authRouter = Router();
+export const petRouter = Router();
 
 // Proxy middleware options
 const options = {
@@ -51,4 +51,4 @@ const options = {
 const petsProxy = createProxyMiddleware(options);
 
 // Use the proxy middleware for all routes
-authRouter.use('/', petsProxy);
+petRouter.use('/', petsProxy);
