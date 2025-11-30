@@ -1,16 +1,19 @@
-import { Request, Response, NextFunction } from 'express';
-import { verifyJwt } from '@smartpet/common';
 
-export function jwtMiddleware(req: any, res: Response, next: NextFunction) {
-  if (req.path === '/health' && req.method === 'GET') {
-    return next();
+import { NextFunction, Request, Response } from 'express';
+import { verifyJwt } from './jwt.middleware';
+
+export function authMiddleware(req: Request, res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Missing token' });
   }
+
+  const token = authHeader.split(' ')[1];
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) throw new Error('Missing token');
-    req.user = verifyJwt(token);
+    const payload = verifyJwt(token);
+    req.user = payload;
     next();
-  } catch (error) {
-    res.status(401).send({ error: 'Unauthorized' });
+  } catch {
+    res.status(401).json({ error: 'Invalid token' });
   }
 }
