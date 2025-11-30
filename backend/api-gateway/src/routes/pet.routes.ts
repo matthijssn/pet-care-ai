@@ -11,14 +11,14 @@ const options = {
   target: config.petServiceUrl,
   changeOrigin: true,
   pathRewrite: {
-    '^/api/pets': '/pets', // remove /api/auth prefix when forwarding
+    '^/api/pets': '/pets', // remove /api/pets prefix when forwarding
   },
   proxyTimeout: 30000, // 30 seconds
   timeout: 30000,
   retry: 3,
   onProxyReq: (proxyReq: any, req: any) => {
     // Log outgoing request for debugging
-    console.log(`[Pets Proxy] Forwarding ${req.method} request to ${config.authServiceUrl}${req.url}`);
+    console.log(`[Pets Proxy] Forwarding ${req.method} request to ${config.petServiceUrl}${req.url}`);
   },
   onProxyRes: (proxyRes: any, req: any) => {
     // Log successful proxy response
