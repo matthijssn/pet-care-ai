@@ -1,44 +1,33 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import { verifyJwt } from '@smartpet/common';
+
+
+import express, { Request, Response, NextFunction } from 'express';
+import petRoutes from './routes/pet.routes';
+import { connectDB } from './db/connect';
+import { jwtMiddleware } from './middleware/auth.middleware';
 
 const app = express();
 app.use(express.json());
 
-dotenv.config();
-mongoose.connect(process.env.MONGO_URL!);
+connectDB();
 
-const Pet = mongoose.model('Pet', new mongoose.Schema({
-  ownerId: String,
-  name: String,
-  species: { type: String, enum: ['dog', 'cat', 'bird', 'fish', 'reptile', 'other'] },
-  breed: String,
-  birthDate: String,
-  weightKg: Number
-}));
-
-
-app.get('/health', (_, res) => {
-  res.send({ ok: true, service: 'pet-service' });
+// Health check endpoint (no auth)
+app.get('/health', (_, res: Response) => {
+  res.send({ ok: true, service: 'pet-service', timestamp: new Date() });
 });
 
-app.listen(3000, () => {
-  console.log('Pet service running on port 3000');
+// JWT middleware for all other routes
+app.use(jwtMiddleware);
+
+// Pet routes
+app.use('/pets', petRoutes);
+
+// Error handling middleware
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error('Unhandled error:', err);
+  res.status(500).send({ error: 'Internal server error' });
 });
 
-app.use((req : any, res, next) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) throw new Error('Missing token');
-    req.user = verifyJwt(token);
-    next();
-  } catch {
-    res.status(401).send({ error: 'Unauthorized' });
-  }
-});
-
-app.get('/', async (req : any, res) => {
-  const pets = await Pet.find({ ownerId: req.user.sub });
-  res.send(pets);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Pet service running on port ${PORT}`);
 });
