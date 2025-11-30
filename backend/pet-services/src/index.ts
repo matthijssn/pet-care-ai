@@ -17,6 +17,6 @@ import { connectDB } from './db/connect';
 (async () => {
   await connectDB();
   // Start daarna je Express-app
-  app.listen(3000, () => console.log('Auth service running on http://localhost:3000'));
+  app.listen(3000, () => console.log('Pet service running on http://localhost:3000'));
 })();
 
