@@ -1,33 +1,22 @@
+import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import authRoutes from './routes/pet.routes';
 
-
-import express, { Request, Response, NextFunction } from 'express';
-import petRoutes from './routes/pet.routes';
-import { connectDB } from './db/connect';
-import { jwtMiddleware } from './middleware/auth.middleware';
+dotenv.config();
 
 const app = express();
+
 app.use(express.json());
 
-connectDB();
+app.use('/pets', authRoutes);
 
-// Health check endpoint (no auth)
-app.get('/health', (_, res: Response) => {
-  res.send({ ok: true, service: 'pet-service', timestamp: new Date() });
-});
+import { connectDB } from './db/connect';
 
-// JWT middleware for all other routes
-app.use(jwtMiddleware);
+(async () => {
+  await connectDB();
+  // Start daarna je Express-app
+  app.listen(3000, () => console.log('Auth service running on http://localhost:3000'));
+})();
 
-// Pet routes
-app.use('/pets', petRoutes);
-
-// Error handling middleware
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error('Unhandled error:', err);
-  res.status(500).send({ error: 'Internal server error' });
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Pet service running on port ${PORT}`);
-});

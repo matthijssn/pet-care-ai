@@ -3,6 +3,9 @@ import { Pet } from '../models/pet.model';
 
 const router = Router();
 
+router.get('/health', (_, res) => res.json({ ok: true, service: 'pet-service' }));
+
+
 // GET all pets for the authenticated user
 router.get('/', async (req: any, res: Response) => {
   try {
