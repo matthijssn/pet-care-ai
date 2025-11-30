@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import authRoutes from './routes/pet.routes';
+import { authMiddleware } from './middleware/auth.middleware';
 
 dotenv.config();
 
@@ -10,7 +11,8 @@ const app = express();
 
 app.use(express.json());
 
-app.use('/pets', authRoutes);
+// Protect pet routes with authentication middleware so handlers can safely use `req.user`
+app.use('/pets', authMiddleware, authRoutes);
 
 import { connectDB } from './db/connect';
 

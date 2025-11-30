@@ -7,42 +7,42 @@ router.get('/health', (_, res) => res.json({ ok: true, service: 'pet-service' })
 
 
 // GET all pets for the authenticated user
-router.get('/', async (req: any, res: Response) => {
+router.get('/', async (req: Request & { user?: { sub: string } }, res: Response) => {
   try {
-    const pets = await Pet.find({ ownerId: req.user.sub })
+    const pets = await Pet.find({ ownerId: req.user!.sub })
       .select('-__v')
       .sort({ createdAt: -1 });
-    res.send(pets);
+    return res.status(200).json(pets);
   } catch (error) {
-    res.status(500).send({ error: 'Failed to fetch pets' });
+    return res.status(500).send({ error: 'Failed to fetch pets' });
   }
 });
 
 // GET a single pet by ID
-router.get('/:petId', async (req: any, res: Response) => {
+router.get('/:petId', async (req: Request & { user?: { sub: string } }, res: Response) => {
   try {
-    const pet = await Pet.findOne({ 
-      _id: req.params.petId, 
-      ownerId: req.user.sub 
+    const pet = await Pet.findOne({
+      _id: req.params.petId,
+      ownerId: req.user!.sub
     }).select('-__v');
     if (!pet) {
       return res.status(404).send({ error: 'Pet not found' });
     }
-    res.send(pet);
+    return res.status(200).json(pet);
   } catch (error) {
-    res.status(500).send({ error: 'Failed to fetch pet' });
+    return res.status(500).send({ error: 'Failed to fetch pet' });
   }
 });
 
 // CREATE a new pet
-router.post('/', async (req: any, res: Response) => {
+router.post('/', async (req: Request & { user?: { sub: string } }, res: Response) => {
   try {
     const { name, species, breed, birthday, weightKg, color, notes } = req.body;
     if (!name || !species) {
       return res.status(400).send({ error: 'Name and species are required' });
     }
     const newPet = new Pet({
-      ownerId: req.user.sub,
+      ownerId: req.user!.sub,
       name,
       species: species.toLowerCase(),
       breed,
@@ -52,19 +52,19 @@ router.post('/', async (req: any, res: Response) => {
       notes
     });
     const savedPet = await newPet.save();
-    res.status(201).send(savedPet);
+    return res.status(201).json(savedPet);
   } catch (error) {
-    res.status(500).send({ error: 'Failed to create pet' });
+    return res.status(500).send({ error: 'Failed to create pet' });
   }
 });
 
 // UPDATE an existing pet
-router.put('/:petId', async (req: any, res: Response) => {
+router.put('/:petId', async (req: Request & { user?: { sub: string } }, res: Response) => {
   try {
     const { name, species, breed, birthday, weightKg, color, notes } = req.body;
-    const pet = await Pet.findOne({ 
-      _id: req.params.petId, 
-      ownerId: req.user.sub 
+    const pet = await Pet.findOne({
+      _id: req.params.petId,
+      ownerId: req.user!.sub
     });
     if (!pet) {
       return res.status(404).send({ error: 'Pet not found' });
@@ -78,25 +78,25 @@ router.put('/:petId', async (req: any, res: Response) => {
     if (notes) pet.notes = notes;
     pet.updatedAt = new Date();
     const updatedPet = await pet.save();
-    res.send(updatedPet);
+    return res.status(200).json(updatedPet);
   } catch (error) {
-    res.status(500).send({ error: 'Failed to update pet' });
+    return res.status(500).send({ error: 'Failed to update pet' });
   }
 });
 
 // DELETE a pet
-router.delete('/:petId', async (req: any, res: Response) => {
+router.delete('/:petId', async (req: Request & { user?: { sub: string } }, res: Response) => {
   try {
-    const pet = await Pet.findOneAndDelete({ 
-      _id: req.params.petId, 
-      ownerId: req.user.sub 
+    const pet = await Pet.findOneAndDelete({
+      _id: req.params.petId,
+      ownerId: req.user!.sub
     });
     if (!pet) {
       return res.status(404).send({ error: 'Pet not found' });
     }
-    res.send({ message: 'Pet deleted successfully', petId: req.params.petId });
+    return res.status(200).json({ message: 'Pet deleted successfully', petId: req.params.petId });
   } catch (error) {
-    res.status(500).send({ error: 'Failed to delete pet' });
+    return res.status(500).send({ error: 'Failed to delete pet' });
   }
 });
 
