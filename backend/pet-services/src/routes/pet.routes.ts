@@ -14,6 +14,7 @@ router.get('/', async (req: Request & { user?: { sub: string } }, res: Response)
       .sort({ createdAt: -1 });
     return res.status(200).json(pets);
   } catch (error) {
+     console.log(error);
     return res.status(500).send({ error: 'Failed to fetch pets' });
   }
 });
@@ -30,6 +31,7 @@ router.get('/:petId', async (req: Request & { user?: { sub: string } }, res: Res
     }
     return res.status(200).json(pet);
   } catch (error) {
+     console.log(error);
     return res.status(500).send({ error: 'Failed to fetch pet' });
   }
 });
@@ -54,6 +56,7 @@ router.post('/', async (req: Request & { user?: { sub: string } }, res: Response
     const savedPet = await newPet.save();
     return res.status(201).json(savedPet);
   } catch (error) {
+    console.log(error);
     return res.status(500).send({ error: 'Failed to create pet' });
   }
 });
@@ -80,6 +83,7 @@ router.put('/:petId', async (req: Request & { user?: { sub: string } }, res: Res
     const updatedPet = await pet.save();
     return res.status(200).json(updatedPet);
   } catch (error) {
+     console.log(error);
     return res.status(500).send({ error: 'Failed to update pet' });
   }
 });
@@ -96,6 +100,7 @@ router.delete('/:petId', async (req: Request & { user?: { sub: string } }, res: 
     }
     return res.status(200).json({ message: 'Pet deleted successfully', petId: req.params.petId });
   } catch (error) {
+     console.log(error);
     return res.status(500).send({ error: 'Failed to delete pet' });
   }
 });
