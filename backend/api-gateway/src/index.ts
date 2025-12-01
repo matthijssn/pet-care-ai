@@ -48,9 +48,15 @@ app.use(express.json());
 // Error handling
 app.use(errorHandler);
 
-const PORT = config.port || 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
-app.listen(PORT, () => {
-  logger.info(`API Gateway listening on port ${PORT}`);
-  logger.info(`Environment: ${config.nodeEnv}`);
-});
+(async () => {
+  try {   
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Pet service running on http://0.0.0.0:${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start pet service:', error);
+    process.exit(1);
+  }
+})();
