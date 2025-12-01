@@ -12,7 +12,21 @@ import { errorHandler } from './middleware/errorHandler';
 const app = express();
 const config = loadConfig();
 
-app.set('trust proxy', true);
+// Configure 'trust proxy' from environment if provided. Avoid using the
+// permissive boolean `true` which can allow trivial bypasses of IP-based
+// rate limiting. Prefer a numeric value (number of trusted proxies) or a
+// specific address string (e.g. 'loopback'). If not set, leave Express's
+// default (no trusted proxies).
+const rawTrustProxy = process.env.TRUST_PROXY ?? process.env.TRUST_PROXY_COUNT;
+if (typeof rawTrustProxy !== 'undefined') {
+  const asNum = Number(rawTrustProxy);
+  if (!Number.isNaN(asNum)) {
+    app.set('trust proxy', asNum);
+  } else {
+    // Use the string value (e.g. 'loopback', '127.0.0.1')
+    app.set('trust proxy', String(rawTrustProxy));
+  }
+}
 
 // Security middleware
 app.use(helmet());
