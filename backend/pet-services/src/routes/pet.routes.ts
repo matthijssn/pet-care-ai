@@ -46,7 +46,7 @@ router.post('/', async (req: Request & { user?: { sub: string } }, res: Response
     const newPet = new Pet({
       ownerId: req.user!.sub,
       name,
-      species: species.toLowerCase(),
+      species: species,
       breed,
       birthday,
       weightKg,
