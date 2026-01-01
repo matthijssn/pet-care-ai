@@ -1,13 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ChatMessage, PetContext } from './chat.models';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
+  
+  private url(path: string) {
+    return `${environment.baseUrl.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
+  }
+  
   streamChat(history: ChatMessage[], petContext?: PetContext): Observable<ChatMessage> {
     return new Observable<ChatMessage>((observer) => {
       const controller = new AbortController();
-      fetch('/api/chat', {
+      fetch(this.url('api/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: history, petContext }),
