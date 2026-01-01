@@ -1,24 +1,20 @@
-// Minimal Grok AI provider wrapper.
-// Expects env vars: GROK_API_URL, GROK_API_KEY (secret).
-// Attempts to POST { messages } to GROK_API_URL and pipe streaming response (SSE or text) to the passed express `res`.
+import { Response } from 'express';
 
 const DEFAULT_TIMEOUT = 120_000;
 
-// Enforce free-tier model usage by default. Use GROK_FREE_MODEL env var to control allowed free model.
 const FREE_MODEL = process.env.GROK_FREE_MODEL || 'grok-mini';
 const MAX_TOKENS = Number(process.env.GROK_MAX_TOKENS || 512);
 
-async function streamToGrokAndPipe(body, res) {
+export async function streamToGrokAndPipe(body: any, res: Response): Promise<void> {
   const url = process.env.GROK_API_URL;
   const key = process.env.GROK_API_KEY;
   if (!url) throw new Error('GROK_API_URL not configured');
 
-  const headers = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
   if (key) headers['Authorization'] = `Bearer ${key}`;
 
-  // Build provider payload and enforce free model / token limits. Ignore any model passed by client.
   const payload = {
     model: FREE_MODEL,
     messages: body.messages || [],
@@ -40,28 +36,26 @@ async function streamToGrokAndPipe(body, res) {
 
   if (!upstream.ok) {
     const text = await upstream.text().catch(() => '');
-    const err = new Error(`Grok upstream error: ${upstream.status} ${upstream.statusText} ${text}`);
-    throw err;
+    throw new Error(`Grok upstream error: ${upstream.status} ${upstream.statusText} ${text}`);
   }
 
-  // Try to pipe body stream to response if possible
-  if (upstream.body && typeof upstream.body.pipe === 'function') {
-    upstream.body.pipe(res);
-  } else if (upstream.body && typeof upstream.body.getReader === 'function') {
-    // Web stream -> read and forward chunks as-is
-    const reader = upstream.body.getReader();
+  // Pipe/forward response
+  // Node's response may be a stream with .pipe; handle Web ReadableStream as well
+  // @ts-ignore
+  if (upstream.body && typeof (upstream.body as any).pipe === 'function') {
+    // @ts-ignore
+    (upstream.body as any).pipe(res);
+  } else if (upstream.body && typeof (upstream.body as any).getReader === 'function') {
+    const reader = (upstream.body as any).getReader();
     const decoder = new TextDecoder();
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
       const chunk = decoder.decode(value);
-      try { res.write(chunk); } catch (e) { /* ignore write errors */ }
+      try { res.write(chunk); } catch (e) { }
     }
   } else {
-    // Fallback: read text and send
     const text = await upstream.text();
     res.write(text);
   }
 }
-
-module.exports = { streamToGrokAndPipe };

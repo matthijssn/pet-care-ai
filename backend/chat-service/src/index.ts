@@ -1,12 +1,12 @@
-const express = require('express');
-const cors = require('cors');
-const { streamToGrokAndPipe } = require('./grok');
+import express from 'express';
+import cors from 'cors';
+import { streamToGrokAndPipe } from './grok';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-function redactPII(text) {
+function redactPII(text?: string) {
   if (!text) return text;
   let out = text.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '[REDACTED_EMAIL]');
   out = out.replace(/\+?\d[\d \-().]{7,}\d/g, '[REDACTED_PHONE]');
@@ -18,13 +18,14 @@ app.post('/api/chat', (req, res) => {
   const { messages } = req.body ?? {};
   const safeMessages = redactPII(JSON.stringify(messages || []));
   console.log('Chat request (redacted):', safeMessages);
+
   const grokUrl = process.env.GROK_API_URL;
   if (grokUrl) {
     // Forward streaming request to configured Grok AI provider
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
-    streamToGrokAndPipe({ messages }, res).catch((err) => {
+    streamToGrokAndPipe({ messages }, res).catch((err: any) => {
       console.error('Grok stream error', err && err.message);
       try { res.write(`data: ${JSON.stringify({ error: 'grok failed' })}\n\n`); } catch (e) {}
       try { res.end(); } catch (e) {}
@@ -63,9 +64,8 @@ app.post('/api/chat', (req, res) => {
     try { res.end(); } catch (e) {}
   });
 });
-// NOTE: GROQ endpoint removed; use Grok provider for LLM streaming. Add additional helper routes as needed.
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`PetCare Chat Service running on http://0.0.0.0:${PORT}`);
 });
