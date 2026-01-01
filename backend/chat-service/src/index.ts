@@ -14,7 +14,7 @@ function redactPII(text?: string) {
   return out;
 }
 
-app.post('/api/chat', (req, res) => {
+app.post('/chat', (req, res) => {
   const { messages } = req.body ?? {};
   const safeMessages = redactPII(JSON.stringify(messages || []));
   console.log('Chat request (redacted):', safeMessages);
