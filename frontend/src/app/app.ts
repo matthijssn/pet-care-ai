@@ -8,7 +8,7 @@ import { ChatDialogComponent } from './chat/chat-dialog.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MatDialogModule, MatButtonModule, MatIconModule, MatTooltipModule, ChatDialogComponent],
+  imports: [RouterOutlet, MatDialogModule, MatButtonModule, MatIconModule, MatTooltipModule],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
