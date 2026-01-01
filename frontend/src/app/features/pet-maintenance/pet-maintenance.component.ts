@@ -9,8 +9,11 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRippleModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AddPetDialogComponent } from './add-pet-dialog.component';
+import { PetIllustrationComponent } from './pet-illustration.component';
 
 import { Pet, PetService } from '../../core';
 
@@ -29,29 +32,52 @@ import { Pet, PetService } from '../../core';
         MatSortModule,
         MatFormFieldModule,
         MatInputModule,
-        MatRippleModule
+        MatRippleModule,
+        MatIconModule,
+        MatSnackBarModule,
+        PetIllustrationComponent
     ],
     templateUrl: './pet-maintenance.component.html',
     styleUrls: ['./pet-maintenance.component.scss']
 })
 export class PetMaintenanceComponent implements OnInit {
-    displayedColumns: string[] = ['name', 'type', 'birthday', 'breed', 'deceaseddate'];
+    displayedColumns: string[] = ['name', 'type', 'birthday', 'breed'];
 
     dataSource = new MatTableDataSource<Pet>([]);
     selectedPet: Pet | null = null;
+    isLoading = true;
+    errorMessage: string | null = null;
 
     @ViewChild(MatPaginator) paginator!: MatPaginator;
     @ViewChild(MatSort) sort!: MatSort;
 
-    constructor(private dialog: MatDialog, private petService: PetService) { }
+    constructor(
+        private dialog: MatDialog,
+        private petService: PetService,
+        private snackBar: MatSnackBar
+    ) { }
 
     ngOnInit(): void {
         this.loadPets();
     }
 
     loadPets() {
-        this.petService.getPets().subscribe((pets : Pet[]) => {
-            this.dataSource.data = pets;
+        this.isLoading = true;
+        this.errorMessage = null;
+        this.petService.getPets().subscribe({
+            next: (pets: Pet[]) => {
+                this.dataSource.data = pets;
+                this.isLoading = false;
+            },
+            error: (error) => {
+                this.isLoading = false;
+                console.error('Error loading pets:', error);
+                const errorMsg = error?.status === 502 
+                    ? 'Backend service is currently unavailable. Please try again later.'
+                    : 'Failed to load pets. Please try again.';
+                this.errorMessage = errorMsg;
+                this.snackBar.open(errorMsg, 'Close', { duration: 5000 });
+            }
         });
     }
 

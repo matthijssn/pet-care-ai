@@ -1,0 +1,24 @@
+<div class="chat-dialog" role="dialog" aria-labelledby="petcare-chat-title" aria-describedby="petcare-chat-desc" cdkTrapFocus>
+  <header class="chat-header">
+    <h2 id="petcare-chat-title">PetCare AI (Beta)</h2>
+    <p id="petcare-chat-desc">This chat uses AI. Verify suggestions with a veterinarian. <a href="#">AI Use & Privacy</a></p>
+    <button mat-icon-button aria-label="Close chat" (click)="close()"><mat-icon>close</mat-icon></button>
+  </header>
+
+  <section class="chat-messages" cdkScrollable aria-live="polite">
+    <div *ngIf="urgent" class="urgent-banner" role="alert" aria-live="assertive">
+      <strong>Seek immediate veterinary care</strong> — urgent signs detected in your message.
+    </div>
+    <div *ngFor="let m of messages" class="message" [class.user]="m.role==='user'" [class.assistant]="m.role==='assistant'">
+      <div class="bubble">{{ m.content }}</div>
+      <div class="ts">{{ m.timestamp }}</div>
+    </div>
+  </section>
+
+  <footer class="chat-composer">
+    <mat-form-field appearance="outline" class="composer-input">
+      <textarea matInput rows="2" [(ngModel)]="composer" aria-label="Message"></textarea>
+    </mat-form-field>
+    <button mat-mini-fab color="primary" aria-label="Send message" (click)="send()" [disabled]="streaming"><mat-icon>send</mat-icon></button>
+  </footer>
+</div>

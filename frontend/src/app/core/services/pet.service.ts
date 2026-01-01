@@ -10,27 +10,26 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class PetService {
-  private apiUrl = 'https://your-backend-api.com/api/pets'; // ✅ Replace with your backend URL
 
   constructor(private http: HttpClient) {}
 
-    private url(path: string) {
-      // ensure no double slashes
-      return `${environment.baseUrl.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
-    }
+  private url(path: string) {
+    // ensure no double slashes
+    return `${environment.baseUrl.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
+  }
 
   /** Get all pets */
   getPets(): Observable<Pet[]> {
-    return this.http.get<Pet[]>(this.apiUrl);
+    return this.http.get<Pet[]>(this.url('api/pets'));
   }
 
   /** Create a new pet */
   createPet(pet: Pet): Observable<Pet> {
-    return this.http.post<Pet>(this.apiUrl, pet);
+    return this.http.post<Pet>(this.url('api/pets'), pet);
   }
 
   /** Update an existing pet */
   updatePet(pet: Pet): Observable<Pet> {
-    return this.http.put<Pet>(`${this.apiUrl}/${pet.id}`, pet);
+    return this.http.put<Pet>(`${this.url('api/pets')}/${pet.id}`, pet);
   }
 }

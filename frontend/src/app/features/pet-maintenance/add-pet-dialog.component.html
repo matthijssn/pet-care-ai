@@ -1,0 +1,193 @@
+<div class="dialog-container">
+  <!-- Header -->
+  <div class="dialog-header">
+    <h2 mat-dialog-title class="dialog-title">
+      <mat-icon class="title-icon">add_circle_outline</mat-icon>
+      Add Your New Pet
+    </h2>
+    <p class="dialog-subtitle">Fill in the details to get started</p>
+  </div>
+
+  <!-- Form Content -->
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="petForm" class="pet-form">
+      
+      <!-- Pet Name (Always Visible) -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Pet Name <span class="required">*</span></mat-label>
+        <input 
+          matInput 
+          formControlName="name"
+          placeholder="e.g., Max, Luna, Fluffy"
+          required
+        />
+        <mat-icon matPrefix>pets</mat-icon>
+        <mat-error *ngIf="petForm.get('name')?.hasError('required')">
+          Pet name is required
+        </mat-error>
+        <mat-error *ngIf="petForm.get('name')?.hasError('minlength')">
+          Name must be at least 2 characters
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Species Dropdown -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Species <span class="required">*</span></mat-label>
+        <mat-select 
+          formControlName="species"
+          (selectionChange)="onSpeciesChange($event.value)"
+          required
+        >
+          <mat-optgroup label="Popular Pets">
+            <mat-option *ngFor="let s of species" [value]="s.name">
+              <span class="species-option">
+                {{ speciesEmojis[s.name] }} {{ s.name }}
+              </span>
+            </mat-option>
+          </mat-optgroup>
+        </mat-select>
+        <mat-icon matPrefix>pets</mat-icon>
+        <mat-error *ngIf="petForm.get('species')?.hasError('required')">
+          Please select a species
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Dynamic Fields Based on Species -->
+      <div *ngIf="selectedSpecies" class="species-fields-container">
+        
+        <!-- Breed Field -->
+        <mat-form-field 
+          *ngIf="shouldShowField('breed')"
+          appearance="outline" 
+          class="full-width"
+        >
+          <mat-label>Breed <span class="required" *ngIf="isFieldRequired('breed')">*</span></mat-label>
+          <input 
+            matInput 
+            formControlName="breed"
+            placeholder="e.g., Golden Retriever, Siamese"
+            [required]="isFieldRequired('breed')"
+          />
+          <mat-icon matPrefix>category</mat-icon>
+          <mat-error *ngIf="petForm.get('breed')?.hasError('required')">
+            Breed is required
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Birthday Field (Date Picker) -->
+        <mat-form-field 
+          *ngIf="shouldShowField('birthday')"
+          appearance="outline" 
+          class="full-width"
+        >
+          <mat-label>Date of Birth <span class="required" *ngIf="isFieldRequired('birthday')">*</span></mat-label>
+          <input 
+            matInput 
+            [matDatepicker]="picker"
+            formControlName="birthday"
+            [required]="isFieldRequired('birthday')"
+            placeholder="MM/DD/YYYY"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="petForm.get('birthday')?.hasError('required')">
+            Date of birth is required
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Weight Field (for mammals) -->
+        <mat-form-field 
+          *ngIf="shouldShowField('weight')"
+          appearance="outline" 
+          class="full-width"
+        >
+          <mat-label>Weight (kg) <span class="required" *ngIf="isFieldRequired('weight')">*</span></mat-label>
+          <input 
+            matInput 
+            type="number"
+            step="0.1"
+            formControlName="weight"
+            placeholder="e.g., 25"
+            [required]="isFieldRequired('weight')"
+          />
+          <mat-icon matPrefix>scale</mat-icon>
+          <mat-error *ngIf="petForm.get('weight')?.hasError('required')">
+            Weight is required
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Color Field (for fish and other colored pets) -->
+        <mat-form-field 
+          *ngIf="shouldShowField('color')"
+          appearance="outline" 
+          class="full-width"
+        >
+          <mat-label>Color/Pattern <span class="required" *ngIf="isFieldRequired('color')">*</span></mat-label>
+          <input 
+            matInput 
+            formControlName="color"
+            placeholder="e.g., Red, Orange and white"
+            [required]="isFieldRequired('color')"
+          />
+          <mat-icon matPrefix>palette</mat-icon>
+          <mat-error *ngIf="petForm.get('color')?.hasError('required')">
+            Color/pattern is required
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <!-- Notes Field (Optional, shown after species selected) -->
+      <mat-form-field 
+        *ngIf="selectedSpecies"
+        appearance="outline" 
+        class="full-width notes-field"
+      >
+        <mat-label>Additional Notes (Optional)</mat-label>
+        <textarea 
+          matInput 
+          formControlName="notes"
+          placeholder="Any additional information about your pet..."
+          rows="3"
+        ></textarea>
+        <mat-icon matPrefix>notes</mat-icon>
+      </mat-form-field>
+
+    </form>
+
+    <!-- Species Guide (Info Card) -->
+    <div *ngIf="selectedSpecies" class="species-info-card">
+      <mat-icon class="info-icon">info</mat-icon>
+      <div class="info-content">
+        <p class="info-title">{{ selectedSpecies.name }} Care Tips</p>
+        <p class="info-text">
+          You're adding a {{ selectedSpecies.name }}! Make sure to keep track of important health records and vaccination dates.
+        </p>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <!-- Dialog Actions -->
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button 
+      mat-button 
+      (click)="onCancel()"
+      class="cancel-btn"
+      [disabled]="isSubmitting"
+    >
+      Cancel
+    </button>
+    <button 
+      mat-raised-button 
+      color="accent"
+      (click)="onAdd()"
+      [disabled]="!petForm.valid || isSubmitting"
+      class="add-btn"
+    >
+      <mat-spinner *ngIf="isSubmitting" diameter="20" class="btn-spinner"></mat-spinner>
+      <mat-icon *ngIf="!isSubmitting">add</mat-icon>
+      {{ isSubmitting ? 'Adding...' : 'Add Pet' }}
+    </button>
+  </mat-dialog-actions>
+</div>
+

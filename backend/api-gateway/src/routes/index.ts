@@ -9,6 +9,9 @@ export function configureRoutes(app: Express) {
   app.use('/api/pets', petRouter);
   app.use('/api/billing', billingRouter);
   app.use('/api/reminders', remindersRouter);
+  // Chat proxy
+  const { chatRouter } = require('./chat.routes');
+  app.use('/api/chat', chatRouter);
 
   // Health check endpoint
   app.get('/health', (req, res) => {

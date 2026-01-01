@@ -1,0 +1,136 @@
+:host {
+	display: block;
+	height: 100%;
+}
+
+.layout {
+	height: 100vh;
+}
+
+.sidenav {
+	width: 260px;
+	background: linear-gradient(180deg, #1976d2 0%, #42a5f5 100%);
+	color: white;
+	display: flex;
+	flex-direction: column;
+}
+
+.side-header {
+	padding: 20px;
+	border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.brand {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.logo {
+	width: 56px;
+	height: 56px;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 28px;
+	background: rgba(255,255,255,0.12);
+	box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.brand-text {
+	.app-name {
+		font-weight: 700;
+		font-size: 16px;
+		letter-spacing: -0.2px;
+	}
+	.app-sub {
+		font-size: 12px;
+		opacity: 0.9;
+	}
+}
+
+.side-menu {
+	padding: 8px 0 0 0;
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	overflow: auto;
+}
+
+.menu-item {
+	color: white;
+	margin: 6px 8px;
+	border-radius: 8px;
+	height: 44px;
+}
+
+.menu-item mat-icon {
+	color: rgba(255,255,255,0.95);
+}
+
+.menu-item.active, .menu-item.mat-list-item-active {
+	background: rgba(255,255,255,0.12);
+	box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+.spacer {
+		flex: 1 1 auto;
+}
+
+.side-footer {
+	padding: 12px;
+	border-top: 1px solid rgba(255,255,255,0.06);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+}
+
+.logout-btn {
+	width: calc(100% - 24px);
+	color: #1976d2;
+	background: white;
+}
+
+.topbar {
+	background: linear-gradient(90deg,#ffffffcc,#ffffffb3);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+	height: 64px;
+	display: flex;
+	align-items: center;
+	padding: 0 16px;
+}
+
+.content {
+	padding: 24px;
+	background: linear-gradient(180deg, #f5f7fa 0%, #ffffff 100%);
+	min-height: calc(100vh - 64px);
+}
+
+@media (max-width: 800px) {
+	.sidenav {
+		width: 72px;
+	}
+	.brand-text { display: none; }
+	.menu-item span { display: none; }
+}
+
+/* Hide visible scrollbars in the sidenav while keeping scrolling functional */
+.sidenav {
+	overflow: auto; /* allow internal scroll if content exceeds height */
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+}
+.sidenav::-webkit-scrollbar {
+	display: none; /* Chrome, Safari, Opera */
+}
+
+/* Ensure the menu itself can scroll internally if needed */
+.side-menu {
+	flex: 1 1 auto;
+	overflow: auto;
+}
+.side-menu::-webkit-scrollbar{
+	display:none;
+}

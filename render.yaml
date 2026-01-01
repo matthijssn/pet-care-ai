@@ -11,6 +11,8 @@ services:
         value: production
       - key: PORT
         value: "3000"
+      - key: CHAT_SERVICE_URL
+        value: https://pet-care-chat-service.onrender.com
       - key: AUTH_SERVICE_URL
         value: https://pet-care-auth-service.onrender.com
       - key: PET_SERVICE_URL
@@ -93,4 +95,29 @@ services:
         value: true
       - key: TRUST_PROXY_COUNT
         value: "1"  
+
+  # Chat Service
+  - type: web
+    name: pet-care-chat-service
+    runtime: node
+    plan: free
+    buildCommand: cd backend/chat-service && npm install && npm run build
+    startCommand: cd backend/chat-service && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "4000"
+      - key: GROK_API_URL
+        value: ""
+      - key: GROK_API_KEY
+        sync: false
+      - key: GROK_FREE_MODEL
+        value: "grok-mini"
+      - key: GROK_MAX_TOKENS
+        value: "512"
+      - key: TRUST_PROXY
+        value: true
+      - key: TRUST_PROXY_COUNT
+        value: "1"
 

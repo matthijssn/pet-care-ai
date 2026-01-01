@@ -7,6 +7,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmLogoutDialogComponent } from './confirm-logout-dialog.component';
 import { AuthService } from '../core';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-layout',
@@ -14,13 +15,14 @@ import { AuthService } from '../core';
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
+    MatIconModule,
     MatToolbarModule,
     MatSidenavModule,
     MatListModule,
     MatDialogModule
   ],
   templateUrl: './layout.component.html',
-  styleUrl: './layout.component.scss',
+  styleUrls: ['./layout.component.scss'],
 })
 export class LayoutComponent {
 
